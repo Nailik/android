@@ -290,7 +290,6 @@ class VaultItemListingViewModelTest : BaseViewModelTest() {
         every {
             BeginGetCredentialRequest.fromBundle(any())
         } returns mockBeginGetCredentialRequest
-
     }
 
     @AfterEach

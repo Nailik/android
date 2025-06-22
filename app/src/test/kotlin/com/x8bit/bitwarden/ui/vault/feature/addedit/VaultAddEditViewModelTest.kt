@@ -2407,8 +2407,6 @@ class VaultAddEditViewModelTest : BaseViewModelTest() {
             }
         }
 
-
-
     @Suppress("MaxLineLength")
     @Test
     fun `in edit mode during Password registration, SaveClick should display ConfirmOverwriteExistingPasswordDialog when original cipher has a password`() =
@@ -4899,7 +4897,6 @@ class VaultAddEditViewModelTest : BaseViewModelTest() {
                     )
                 }
             }
-
 
     @Suppress("MaxLineLength")
     @Test
