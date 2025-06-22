@@ -53,6 +53,7 @@ import com.x8bit.bitwarden.data.util.advanceTimeByAndRunCurrent
 import com.x8bit.bitwarden.data.vault.datasource.sdk.model.createMockCipherView
 import com.x8bit.bitwarden.ui.credentials.manager.CredentialProviderCompletionManager
 import com.x8bit.bitwarden.ui.credentials.manager.model.RegisterFido2CredentialResult
+import com.x8bit.bitwarden.ui.credentials.manager.model.RegisterPasswordResult
 import com.x8bit.bitwarden.ui.platform.base.BitwardenComposeTest
 import com.x8bit.bitwarden.ui.platform.manager.biometrics.BiometricsManager
 import com.x8bit.bitwarden.ui.platform.manager.exit.ExitManager
@@ -110,6 +111,7 @@ class VaultAddEditScreenTest : BitwardenComposeTest() {
     }
     private val credentialProviderCompletionManager: CredentialProviderCompletionManager = mockk {
         every { completeFido2Registration(any()) } just runs
+        every { completePasswordRegistration(any()) } just runs
     }
     private val biometricsManager: BiometricsManager = mockk {
         every { isUserVerificationSupported } returns true
@@ -221,7 +223,7 @@ class VaultAddEditScreenTest : BitwardenComposeTest() {
     }
 
     @Test
-    fun `on CompleteFido2Create event should invoke Fido2CompletionManager`() {
+    fun `on CompleteFido2Create event should invoke CredentialProviderCompletionManager`() {
         val result = RegisterFido2CredentialResult.Success(
             responseJson = "mockRegistrationResponse",
         )
@@ -233,6 +235,25 @@ class VaultAddEditScreenTest : BitwardenComposeTest() {
     fun `Fido2Error dialog should display based on state`() {
         mutableStateFlow.value = DEFAULT_STATE_LOGIN.copy(
             dialog = VaultAddEditState.DialogState.Fido2Error("mockMessage".asText()),
+        )
+
+        composeTestRule
+            .onAllNodesWithText("mockMessage")
+            .filterToOne(hasAnyAncestor(isDialog()))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun `on CompletePasswordCreate event should invoke CredentialProviderCompletionManager`() {
+        val result = RegisterPasswordResult.Success
+        mutableEventFlow.tryEmit(VaultAddEditEvent.CompletePasswordRegistration(result = result))
+        verify { credentialProviderCompletionManager.completePasswordRegistration(result) }
+    }
+
+    @Test
+    fun `PasswordError dialog should display based on state`() {
+        mutableStateFlow.value = DEFAULT_STATE_LOGIN.copy(
+            dialog = VaultAddEditState.DialogState.PasswordError("mockMessage".asText()),
         )
 
         composeTestRule
